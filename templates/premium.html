@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium | CineVerse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .premium-container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 25px;
+            color: white;
+            text-align: center;
+        }
+
+        .premium-label {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #38234f;
+            color: #d8b4fe;
+            border-radius: 30px;
+            margin-bottom: 15px;
+        }
+
+        .premium-container h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            margin-bottom: 15px;
+        }
+
+        .premium-description {
+            color: #bbb;
+            max-width: 650px;
+            margin: 0 auto 35px;
+            line-height: 1.7;
+        }
+
+        .plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 22px;
+            margin-top: 35px;
+        }
+
+        .plan-card {
+            background: #191526;
+            border: 1px solid #3b2c4c;
+            border-radius: 18px;
+            padding: 28px;
+            text-align: left;
+        }
+
+        .plan-card.featured {
+            border: 2px solid #a855f7;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.15);
+        }
+
+        .plan-card h2 {
+            margin-bottom: 12px;
+        }
+
+        .plan-price {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .plan-card ul {
+            padding-left: 20px;
+            color: #ccc;
+            line-height: 2;
+        }
+
+        .plan-button {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            padding: 12px;
+            margin-top: 25px;
+            background: #a855f7;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .plan-button:hover {
+            background: #9333ea;
+        }
+
+        .premium-note {
+            margin-top: 30px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .premium-container a.back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #d8b4fe;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="premium-container">
+        <span class="premium-label">✦ CINEVERSE PREMIUM</span>
+
+        <h1>Entertainment, Elevated.</h1>
+
+        <p class="premium-description">
+            Explore membership concepts designed for movie lovers.
+            Enjoy a cleaner experience, personalised recommendations,
+            and more ways to discover films.
+        </p>
+
+        <div class="plans">
+            <section class="plan-card">
+                <h2>Free</h2>
+                <p>For casual movie lovers.</p>
+
+                <div class="plan-price">₹0</div>
+
+                <ul>
+                    <li>Browse available movies</li>
+                    <li>Search for movies</li>
+                    <li>Get movie recommendations</li>
+                </ul>
+
+                <a class="plan-button" href="{{ url_for('home') }}">
+                    Explore Movies
+                </a>
+            </section>
+
+            <section class="plan-card featured">
+                <h2>Premium ✨</h2>
+                <p>For dedicated movie fans.</p>
+
+                <div class="plan-price">Coming Soon</div>
+
+                <ul>
+                    <li>Personalised movie collections</li>
+                    <li>Advanced discovery features</li>
+                    <li>Premium-themed experience</li>
+                </ul>
+
+                {% if logged_in %}
+                <a class="plan-button" href="{{ url_for('home') }}">
+                    Explore CineVerse
+                </a>
+                {% else %}
+                <a class="plan-button" href="{{ url_for('login') }}">
+                    Login to Continue
+                </a>
+                {% endif %}
+            </section>
+        </div>
+
+        <p class="premium-note">
+            Demo project: membership plans are illustrative.
+            No payment is collected and no premium subscription is activated.
+        </p>
+
+        <a class="back-link" href="{{ url_for('home') }}">
+            ← Back to Home
+        </a>
+    </main>
+
+</body>
+
+</html>

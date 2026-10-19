@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineVerse | Discover Your Next Movie</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="/" class="logo">
+            <span class="logo-icon">C</span>
+            CineVerse<span class="logo-dot">.</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#trending">Trending</a>
+            <a href="#explore">Explore</a>
+            <a href="#recommendations">For You</a>
+            <div class="auth-nav">
+                {% if session.get('user_id') %}
+                <span class="welcome-user">
+                    Hi, {{ session.get('user_name') }}!
+                </span>
+
+                <form action="{{ url_for('logout') }}" method="POST">
+                    <button type="submit" class="nav-auth-button">
+                        Logout
+                    </button>
+                </form>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+                {% endif %}
+
+                <a href="{{ url_for('premium') }}" class="premium-nav-link">
+                    ✦ Premium
+                </a>
+            </div>
+
+        </nav>
+
+        <div class="nav-actions">
+            <button class="search-toggle" id="focus-search" aria-label="Search movies">
+                ⌕
+            </button>
+            <span class="profile-avatar">C</span>
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- HERO SECTION -->
+
+        <section class="hero" id="home">
+
+            <div class="hero-background"></div>
+
+            <div class="hero-content">
+
+                <div class="eyebrow">
+                    <span class="live-dot"></span>
+                    YOUR PERSONAL MOVIE UNIVERSE
+                </div>
+
+                <p class="hero-kicker">MOVIES THAT MOVE YOU</p>
+
+                <h1>
+                    Your next<br>
+                    <span>obsession</span><br>
+                    starts here.
+                </h1>
+
+                <p class="hero-description">
+                    Discover extraordinary stories from Hollywood,
+                    Bollywood, Tollywood and beyond.
+                </p>
+
+                <form id="search-form" class="search-form">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input type="text" id="movie-input" list="movie-list" placeholder="Search your favourite movie..."
+                        autocomplete="off" required>
+
+                    <datalist id="movie-list">
+                        {% for movie in movies %}
+                        <option value="{{ movie.title }}">
+                            {% endfor %}
+                    </datalist>
+
+                    <button type="submit" id="search-button">
+                        Discover <span>→</span>
+                    </button>
+
+                </form>
+
+                <p id="message" class="message" aria-live="polite"></p>
+
+                <div class="hero-meta">
+                    <span>✦ Hollywood</span>
+                    <span>✦ Bollywood</span>
+                    <span>✦ Tollywood</span>
+                </div>
+
+            </div>
+
+            <div class="hero-side-note">
+                <span>01 / DISCOVER</span>
+                <div class="side-line"></div>
+                <span>YOUR NEXT FAVOURITE</span>
+            </div>
+
+            <div class="hero-bottom-fade"></div>
+
+        </section>
+
+
+        <!-- SEARCH RECOMMENDATIONS -->
+
+        <section class="section results-section hidden" id="recommendations">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">HANDPICKED FOR YOU</p>
+                    <h2>Because you watched <span id="searched-title"></span></h2>
+                </div>
+
+                <button class="text-button" id="clear-recommendations">
+                    Clear ×
+                </button>
+            </div>
+
+            <div class="movie-grid" id="recommendation-grid"></div>
+
+        </section>
+
+
+        <!-- TRENDING MOVIES -->
+
+        <section class="section" id="trending">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">THE CROWD FAVOURITES</p>
+                    <h2>Trending <span>Now</span></h2>
+                    <p class="section-subtitle">
+                        Stories everyone is talking about.
+                    </p>
+                </div>
+
+                <span class="section-count">
+                    {{ movies|length }} MOVIES
+                </span>
+            </div>
+
+            <div class="movie-grid" id="trending-grid">
+
+                {% for movie in movies %}
+
+                <article class="movie-card" data-title="{{ movie.title|e }}" data-genre="{{ movie.genre|lower|e }}"
+                    data-description="{{ movie.description|e }}">
+
+                    <div class="poster-wrap">
+
+                        {% if movie.poster %}
+                        <img class="movie-poster" src="{{ movie.poster|e }}" alt="{{ movie.title|e }} poster"
+                            loading="lazy">
+                        {% else %}
+                        <div class="poster-placeholder">
+                            <span>🎬</span>
+                            <p>{{ movie.title }}</p>
+                        </div>
+                        {% endif %}
+
+                        <div class="poster-overlay">
+
+                            <button class="play-button quick-recommend" data-title="{{ movie.title|e }}"
+                                aria-label="Find movies similar to {{ movie.title|e }}">
+                                ▶
+                            </button>
+
+                            <span class="overlay-label">FIND SIMILAR</span>
+
+                        </div>
+
+                        <span class="poster-rating">
+                            ★ {{ movie.rating or 'N/A' }}
+                        </span>
+
+                    </div>
+
+                    <div class="movie-info">
+                        <h3>{{ movie.title }}</h3>
+                        <p class="movie-genre">{{ movie.genre or 'Movie' }}</p>
+                    </div>
+
+                </article>
+
+                {% else %}
+
+                <div class="empty-state">
+                    <h3>No movies found</h3>
+                    <p>Add movies to your data/movies.csv file.</p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- EXPLORE BY GENRE -->
+
+        <section class="section explore-section" id="explore">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">PICK YOUR MOOD</p>
+                    <h2>Explore <span>Collections</span></h2>
+                    <p class="section-subtitle">
+                        From edge-of-your-seat thrillers to unforgettable romances.
+                    </p>
+                </div>
+            </div>
+
+            <div class="filter-list" id="genre-filters">
+
+                <button class="filter-btn active" data-genre="all">
+                    All Movies
+                </button>
+
+                <button class="filter-btn" data-genre="action">Action</button>
+                <button class="filter-btn" data-genre="sci-fi">Sci-Fi</button>
+                <button class="filter-btn" data-genre="romance">Romance</button>
+                <button class="filter-btn" data-genre="horror">Horror</button>
+                <button class="filter-btn" data-genre="drama">Drama</button>
+                <button class="filter-btn" data-genre="comedy">Comedy</button>
+                <button class="filter-btn" data-genre="thriller">Thriller</button>
+
+            </div>
+
+            <p id="filter-count" class="filter-count"></p>
+
+            <div class="movie-grid" id="explore-grid">
+
+                {% for movie in movies %}
+
+                <article class="movie-card explore-card" data-title="{{ movie.title|e }}"
+                    data-genre="{{ movie.genre|lower|e }}" data-description="{{ movie.description|e }}">
+
+                    <div class="poster-wrap">
+
+                        {% if movie.poster %}
+                        <img class="movie-poster" src="{{ movie.poster|e }}" alt="{{ movie.title|e }} poster"
+                            loading="lazy">
+                        {% else %}
+                        <div class="poster-placeholder">
+                            <span>🎬</span>
+                            <p>{{ movie.title }}</p>
+                        </div>
+                        {% endif %}
+
+                        <div class="poster-overlay">
+                            <button class="play-button quick-recommend" data-title="{{ movie.title|e }}"
+                                aria-label="Find movies similar to {{ movie.title|e }}">
+                                ▶
+                            </button>
+                            <span class="overlay-label">FIND SIMILAR</span>
+                        </div>
+
+                        <span class="poster-rating">
+                            ★ {{ movie.rating or 'N/A' }}
+                        </span>
+
+                    </div>
+
+                    <div class="movie-info">
+                        <h3>{{ movie.title }}</h3>
+                        <p class="movie-genre">{{ movie.genre or 'Movie' }}</p>
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="no-results hidden" id="no-filter-results">
+                <span>🎞️</span>
+                <h3>No movies in this collection yet</h3>
+                <p>Try another genre or browse all movies.</p>
+            </div>
+
+            <div class="center-action">
+                <button class="outline-button" id="show-all">
+                    Show All Movies <span>↓</span>
+                </button>
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT -->
+
+        <section class="about-section" id="about">
+
+            <div class="about-glow"></div>
+
+            <div class="about-content">
+                <p class="section-label">MORE THAN JUST MOVIES</p>
+
+                <h2>
+                    Find stories<br>
+                    that feel <span>like yours.</span>
+                </h2>
+
+                <p>
+                    CineVerse helps you discover your next favourite movie
+                    through a recommendation engine that compares movie
+                    genres and descriptions.
+                </p>
+
+                <a href="#trending" class="primary-button">
+                    Start Exploring →
+                </a>
+            </div>
+
+            <div class="about-symbol">C<span>.</span></div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+
+        <a href="#home" class="logo">
+            <span class="logo-icon">C</span>
+            CineVerse<span class="logo-dot">.</span>
+        </a>
+
+        <p>Made for people who love great stories.</p>
+
+        <span class="footer-credit">
+            A Movie Discovery Project
+        </span>
+
+    </footer>
+
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
